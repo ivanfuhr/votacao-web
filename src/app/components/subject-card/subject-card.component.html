@@ -14,7 +14,7 @@
                 'Não'
                 }}</span>
 
-            <a [routerLink]="['/vote', subject.id]"
+            <a [routerLink]="['/votar', subject.id]"
                 class="w-full bg-zinc-800 text-zinc-100 p-2 rounded md:w-fit disabled:bg-zinc-600 text-nowrap">{{
                 isVoted || timeIsEnding ? 'Ver resultados' : 'Votar'
                 }}</a>

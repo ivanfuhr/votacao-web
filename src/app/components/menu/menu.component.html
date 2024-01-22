@@ -1,0 +1,38 @@
+<button (click)="toggleMenu()">
+    <div class="flex h-6 w-8 flex-col items-center justify-around">
+        <span class="block h-1 w-full rounded bg-zinc-900"></span>
+        <span class="block h-1 w-full rounded bg-zinc-900"></span>
+        <span class="block h-1 w-full rounded bg-zinc-900"></span>
+    </div>
+</button>
+
+<div *ngIf="isOpen" class="fixed top-0 left-0 w-screen h-screen bg-zinc-900/20 flex items-start">
+    <div class="bg-zinc-100 w-full max-w-xs h-screen">
+
+        <div class="p-6 h-full">
+            <div class="flex w-full items-center justify-between">
+                <app-brand />
+                <button class="text-zinc-900 text-bold text-2xl" (click)="toggleMenu()">&#x2715;</button>
+            </div>
+
+            <nav class="mt-6 w-full h-full gap-3 flex flex-col ">
+                <ul class="flex flex-col gap-2 w-full">
+
+                    <li class="w-full flex">
+                        <a [routerLink]="['/']" class="p-2 rounded w-full hover:bg-zinc-200 cursor-pointer">Home</a>
+                    </li>
+
+                    <li class="w-full flex">
+                        <a [routerLink]="['/meus-votos']"
+                            class="p-2 rounded w-full hover:bg-zinc-200 cursor-pointer">Meus
+                            votos</a>
+                    </li>
+
+
+                </ul>
+
+                <button class="w-full bg-zinc-900 text-zinc-50 rounded p-2" (click)="logout()">Logout</button>
+            </nav>
+        </div>
+    </div>
+</div>

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ToastService } from '../../components/toast/toast.service';
+import { User } from '../../types/User';
 import { LoginUserDTO } from './dto/login-user.dto';
 
 @Injectable({
@@ -40,7 +41,7 @@ export class AuthService {
     return !!this.tokenSubject.value;
   }
 
-  getUser(): any {
+  getUser(): Observable<User> {
     return this.userSubject.asObservable();
   }
 
@@ -60,7 +61,7 @@ export class AuthService {
             type: 'success',
           });
 
-          this.router.navigate(['/']);
+          window.location.reload();
           return response;
         }),
         catchError((error) => {
@@ -86,7 +87,7 @@ export class AuthService {
           this.userSubject.next(null);
           this.toast.show({ message: 'Sessão expirada!', type: 'error' });
 
-          this.router.navigate(['/login']);
+          window.location.reload();
         }
         return throwError(error);
       }),
@@ -97,8 +98,15 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem(this.jwtTokenKey);
     }
+
     this.tokenSubject.next('');
     this.userSubject.next(null);
-    this.router.navigate(['/login']);
+
+    this.toast.show({
+      message: 'Logout realizado com sucesso!',
+      type: 'success',
+    });
+
+    window.location.reload();
   }
 }
