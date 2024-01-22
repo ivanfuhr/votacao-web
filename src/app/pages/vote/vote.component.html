@@ -1,0 +1,60 @@
+<div class="py-6">
+    <div class="w-full bg-zinc-50 rounded">
+
+        <div class="border-b border-zinc-300 px-4 py-2 flex items-center justify-between" *ngIf="subject.category">
+            <h5 class="text-sm font-thin text-zinc-700">{{ subject.category.title }}</h5>
+        </div>
+
+        <div class="px-4 py-4 flex flex-col gap-2 items-start">
+            <h3 class="text-xl font-bold text-zinc-900 w-full">{{ subject.title }}</h3>
+            <p class="text-zinc-800">{{ subject.description }}</p>
+
+            <div *ngIf="!isVoted && !timeIsEnding else results" class="flex flex-col gap-2 w-full">
+                <h4 class="text-zinc-900 font-bold">Qual sua opinião, você concoda?</h4>
+                <form class="w-full flex flex-col gap-2" [formGroup]="voteForm" (submit)="onSubmit()">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="radio" id="sim" class="hidden" value="YES" formControlName="vote">
+                        <label for="sim"
+                            class="flex items-center justify-center p-3 text-zinc-50 rounded bg-green-500 w-full cursor-pointer">
+                            Sim
+                        </label>
+
+                        <input type="radio" id="nao" class="hidden" value="NO" formControlName="vote">
+                        <label for="nao"
+                            class="flex items-center justify-center p-3 text-zinc-50 rounded bg-red-500 w-full cursor-pointer">
+                            Não
+                        </label>
+                    </div>
+
+                    <div *ngIf="voteForm.get('vote')?.value">
+                        <app-button [label]="'Votar'" [type]="'submit'" />
+                        <span class="text-sm font-thin text-red-500">* depois de votar, você não poderá
+                            mudar sua
+                            opinião.</span>
+                    </div>
+                </form>
+                <span class="text-sm font-thin text-zinc-700 w-full text-center">Tempo restante: {{ timeDisplay
+                    }}</span>
+            </div>
+
+
+        </div>
+
+        <ng-template #results>
+            <div class="w-full" *ngIf="voteResults && voteResults.totalVotes > 0 else noResults">
+                <h4 class="text-zinc-900 font-bold">Veja os resultados dessa pauta:</h4>
+
+                <div class="w-full flex items-center justify-center flex-col gap-2">
+                    <app-pie-chart [yesVotes]="voteResults.votesYes" [noVotes]="voteResults.votesNo" />
+                    <h3>Seu voto foi: {{ subject.votes[0].type == 'YES' ? 'Sim' : 'Não' }}</h3>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #noResults>
+            <div class="w-full flex items-center justify-center flex-col gap-2">
+                <h3 class="text-zinc-900 font-bold">Nenhum voto registrado.</h3>
+            </div>
+        </ng-template>
+    </div>
+</div>

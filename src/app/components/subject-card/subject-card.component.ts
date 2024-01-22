@@ -1,13 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { Subject } from '../../types/Subject';
-import { SubjectVoted } from '../../types/SubjectVoted';
-import { SubjectModalComponent } from '../subject-modal/subject-modal.component';
 
 @Component({
   selector: 'app-subject-card',
   standalone: true,
-  imports: [CommonModule, SubjectModalComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './subject-card.component.html',
 })
 export class SubjectCardComponent {
@@ -15,7 +14,6 @@ export class SubjectCardComponent {
 
   private timer: any;
   private endTime: Date = new Date();
-  isModalOpen: boolean = false;
   timeIsEnding: boolean = false;
   timeDisplay: string = '';
   isVoted: boolean = false;
@@ -36,19 +34,6 @@ export class SubjectCardComponent {
     if (this.timer) {
       clearInterval(this.timer);
     }
-  }
-
-  openModal() {
-    this.isModalOpen = true;
-  }
-
-  closeModal() {
-    this.isModalOpen = false;
-  }
-
-  voteEvent({ id, type }: SubjectVoted) {
-    this.subject.votes.push({ id, type });
-    this.isVoted = true;
   }
 
   private calculateEndTime() {

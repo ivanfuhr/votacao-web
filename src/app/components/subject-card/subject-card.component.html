@@ -7,17 +7,20 @@
     <div class="px-4 py-4 flex flex-col gap-4 items-center justify-between md:flex-row  ">
         <h3 class="text-xl font-bold text-zinc-900 w-100">{{ subject.title }}</h3>
 
-        <app-subject-modal *ngIf="!isVoted; else alredyVoted" [subject]="subject" [timeDisplay]="timeDisplay"
-            [timeIsEnding]="timeIsEnding" (voteEvent)="voteEvent($event)" />
+        <div class="flex gap-2 items-center w-full md:w-min text-center">
+            <span *ngIf="isVoted" class=" text-zinc-50 bg-zinc-800 p-2 rounded text-nowrap">R: {{
+                subject.votes[0].type == 'YES'
+                ? 'Sim' :
+                'Não'
+                }}</span>
 
-        <ng-template #alredyVoted>
-            <div class="flex items-center justify-center gap-4 flex-col">
-                <h3 class="text-md text-zinc-900">Você votou: <span class="font-bold">{{ subject.votes[0].type == 'YES'
-                        ? 'Sim' :
-                        'Não'
-                        }}</span></h3>
-            </div>
-        </ng-template>
+            <a [routerLink]="['/vote', subject.id]"
+                class="w-full bg-zinc-800 text-zinc-100 p-2 rounded md:w-fit disabled:bg-zinc-600 text-nowrap">{{
+                isVoted || timeIsEnding ? 'Ver resultados' : 'Votar'
+                }}</a>
+
+        </div>
+
 
     </div>
 </div>

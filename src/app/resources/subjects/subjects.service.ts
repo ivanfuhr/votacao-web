@@ -12,6 +12,10 @@ export class SubjectsService {
 
   constructor(private httpClient: HttpClient) {}
 
+  getSubject(id: string): Observable<any> {
+    return this.httpClient.get(`${this.apiUrl}/${id}`);
+  }
+
   getSubjects(): Observable<any> {
     if (this.cache) {
       return of(this.cache);

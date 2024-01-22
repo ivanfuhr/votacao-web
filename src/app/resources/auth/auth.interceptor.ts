@@ -4,16 +4,13 @@ import {
   HttpInterceptorFn,
   HttpRequest,
 } from '@angular/common/http';
-import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AuthService } from './auth.service';
 
 export const AuthInterceptor: HttpInterceptorFn = (
   req: HttpRequest<any>,
   next: HttpHandlerFn,
 ): Observable<HttpEvent<any>> => {
-  const authService = inject(AuthService);
-  const token = authService.getTokenValue();
+  const token = localStorage.getItem('@votacao/token');
 
   if (token) {
     const cloned = req.clone({
