@@ -6,6 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { BrandComponent } from '../../components/brand/brand.component';
 import { ButtonComponent } from '../../components/button/button.component';
 import { FormComponent } from '../../components/form/form.component';
 import { InputComponent } from '../../components/input/input.component';
@@ -20,6 +21,7 @@ import { AuthService } from '../../resources/auth/auth.service';
     ButtonComponent,
     FormsModule,
     ReactiveFormsModule,
+    BrandComponent,
   ],
   templateUrl: './login.component.html',
 })
@@ -35,8 +37,36 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.loginForm.valid) {
-      return;
-      this.authService.login(this.loginForm.value);
+      this.authService.login(this.loginForm.value).subscribe({
+        next: (response) => {
+          console.log('Login bem-sucedido:', response);
+        },
+        error: (error) => {
+          this.handleServerError(error);
+        },
+      });
+    }
+  }
+
+  getErrorMessage(controlName: string): string {
+    const control = this.loginForm.get(controlName);
+    if (control && control.errors && 'serverError' in control.errors) {
+      return control.errors['serverError'];
+    }
+    return '';
+  }
+
+  private handleServerError(error: any) {
+    const errors = error?.error?.message;
+
+    if (errors && Array.isArray(errors)) {
+      errors.forEach((err) => {
+        const control = this.loginForm.get(err.path);
+
+        if (control) {
+          control.setErrors({ serverError: err.message });
+        }
+      });
     }
   }
 }

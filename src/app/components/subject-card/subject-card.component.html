@@ -1,0 +1,23 @@
+<div class="bg-zinc-50 rounded flex flex-col ">
+    <div class="border-b border-zinc-300 px-4 py-2 flex items-center justify-between">
+        <h5 class="text-sm font-thin text-zinc-700">{{ subject.category.title }}</h5>
+        <span class="text-sm font-thin text-zinc-700">{{ timeDisplay }}</span>
+    </div>
+
+    <div class="px-4 py-4 flex flex-col gap-4 items-center justify-between md:flex-row  ">
+        <h3 class="text-xl font-bold text-zinc-900 w-100">{{ subject.title }}</h3>
+
+        <app-subject-modal *ngIf="!isVoted; else alredyVoted" [subject]="subject" [timeDisplay]="timeDisplay"
+            [timeIsEnding]="timeIsEnding" (voteEvent)="voteEvent($event)" />
+
+        <ng-template #alredyVoted>
+            <div class="flex items-center justify-center gap-4 flex-col">
+                <h3 class="text-md text-zinc-900">Você votou: <span class="font-bold">{{ subject.votes[0].type == 'YES'
+                        ? 'Sim' :
+                        'Não'
+                        }}</span></h3>
+            </div>
+        </ng-template>
+
+    </div>
+</div>

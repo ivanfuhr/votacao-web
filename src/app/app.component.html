@@ -1,2 +1,11 @@
 <app-toast></app-toast>
-<router-outlet></router-outlet>
+
+<header class="bg-zinc-50" *ngIf="user">
+    <div class="max-w-screen-lg px-8 py-6 mx-auto">
+        <app-brand />
+    </div>
+</header>
+
+<main class="mx-auto max-w-screen-lg px-8">
+    <router-outlet></router-outlet>
+</main>

@@ -1,1 +1,9 @@
-<p>home works!</p>
+<div class="flex flex-col gap-6 py-6" *ngIf="subjects && subjects.length > 0; else noSubjects">
+    <app-subject-card *ngFor="let subject of subjects" [subject]="subject" />
+</div>
+
+<ng-template #noSubjects>
+    <div class="flex items-center justify-center gap-4 flex-col">
+        <h3 class="text-xl font-bold text-zinc-900">Nenhuma pauta ativa no momento</h3>
+    </div>
+</ng-template>

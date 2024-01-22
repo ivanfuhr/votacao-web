@@ -1,25 +1,18 @@
+<div class="flex flex-col justify-center items-start gap-4 max-w-sm mx-auto h-screen">
 
-<div class="flex flex-col justify-center items-start gap-3 max-w-sm mx-auto h-screen">
-    <h3 class="text-2xl font-bold text-zinc-800 mb-8 max-w-xs">
+    <app-brand />
+
+    <h3 class="text-md text-zinc-800">
         Bem vindo de volta! Que bom ver você, de novo!
     </h3>
 
     <form app-form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <app-input
-            [placeholder]="'Informe o seu documento'"
-            [type]="'text'"
-            formControlName="document"
-        />
+        <app-input [placeholder]="'Informe o seu documento'" [type]="'text'" [mask]="'000.000.000-00'"
+            [errorMessage]="getErrorMessage('document')" formControlName="document" />
 
-        <app-input
-            [placeholder]="'Informe a sua senha'"
-            [type]="'password'"
-            formControlName="password"
-        />        
+        <app-input [placeholder]="'Informe a sua senha'" [type]="'password'"
+            [errorMessage]="getErrorMessage('password')" formControlName="password" />
 
-        <app-button
-            [label]="'Entrar'"            
-            [type]="'submit'"
-        />
+        <app-button [label]="'Entrar'" [type]="'submit'" />
     </form>
-</div>  
+</div>
