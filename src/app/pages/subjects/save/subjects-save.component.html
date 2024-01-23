@@ -1,0 +1,32 @@
+<div class="flex flex-col gap-6 py-6">
+    <div class="bg-zinc-50 rounded flex flex-col p-4 gap-6">
+
+        <div class="flex w-full justify-between">
+            <h3 class="text-xl text-zinc-900 font-bold">Pauta</h3>
+            <a [routerLink]="['/pautas']" class="text-zinc-900">Voltar</a>
+        </div>
+
+        <form app-form [formGroup]="subjectForm" (ngSubmit)="onSubmit()">
+            <app-input label="Título" placeholder="Título" [type]="'text'" formControlName="title"
+                [errorMessage]="getErrorMessage('title')" />
+            <app-input label="Descrição" placeholder="Descrição" [type]="'textarea'" formControlName="description"
+                [errorMessage]="getErrorMessage('description')" />
+            <app-input label="Tempo de duração (s)" placeholder="Tempo de duração (s)" [type]="'number'"
+                [errorMessage]="getErrorMessage('timeToEnd')" formControlName="timeToEnd" />
+            <app-input label="Inicia em" placeholder="Inicia em" [type]="'datetime-local'" formControlName="startAt"
+                [errorMessage]="getErrorMessage('startAt')" />
+
+            <app-select label="Categoria" [options]="categoryOptions" formControlName="categoryId"
+                [placeholder]="'Selecionar categoria'" [errorMessage]="getErrorMessage('categoryId')" />
+
+            <app-button label="Salvar" [type]="'submit'" />
+            <app-delete-button *ngIf="subject.id" (deleteAction)="handleDeeleteAction()" />
+
+        </form>
+
+
+        <div class="mx-auto max-w-sm" *ngIf="voteResults.totalVotes">
+            <app-pie-chart [yesVotes]="voteResults.votesYes" [noVotes]="voteResults.votesNo" />
+        </div>
+    </div>
+</div>

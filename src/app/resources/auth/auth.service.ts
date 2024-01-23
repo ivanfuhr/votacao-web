@@ -1,7 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ToastService } from '../../components/toast/toast.service';
@@ -16,18 +15,21 @@ export class AuthService {
   private userSubject = new BehaviorSubject<any>(null);
 
   jwtTokenKey = '@votacao/token';
+  userKey = '@votacao/user';
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private http: HttpClient,
     private readonly toast: ToastService,
-    private router: Router,
   ) {
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem(this.jwtTokenKey);
+      const user = localStorage.getItem(this.userKey);
 
-      if (token) {
+      if (token && user) {
         this.tokenSubject.next(token);
+        this.userSubject.next(JSON.parse(user));
+
         this.revalidate().subscribe();
       }
     }
@@ -41,6 +43,10 @@ export class AuthService {
     return !!this.tokenSubject.value;
   }
 
+  isAdmin(): boolean {
+    return this.userSubject.value?.role === 'ADMIN';
+  }
+
   getUser(): Observable<User> {
     return this.userSubject.asObservable();
   }
@@ -50,9 +56,7 @@ export class AuthService {
       .post('http://localhost:3000/auth/login', { document, password })
       .pipe(
         map((response: any) => {
-          if (isPlatformBrowser(this.platformId)) {
-            localStorage.setItem(this.jwtTokenKey, response.access_token);
-          }
+          this.setLocalStorage(response.access_token, response.user);
           this.tokenSubject.next(response.access_token);
           this.userSubject.next(response.user);
 
@@ -75,14 +79,13 @@ export class AuthService {
       map((response: any) => {
         this.tokenSubject.next(response.access_token);
         this.userSubject.next(response.user);
+        this.setLocalStorage(response.access_token, response.user);
 
         return response;
       }),
       catchError((error) => {
         if (error.status === 401) {
-          if (isPlatformBrowser(this.platformId)) {
-            localStorage.removeItem(this.jwtTokenKey);
-          }
+          this.removeLocalStorage();
           this.tokenSubject.next('');
           this.userSubject.next(null);
           this.toast.show({ message: 'Sessão expirada!', type: 'error' });
@@ -95,9 +98,7 @@ export class AuthService {
   }
 
   logout(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem(this.jwtTokenKey);
-    }
+    this.removeLocalStorage();
 
     this.tokenSubject.next('');
     this.userSubject.next(null);
@@ -108,5 +109,19 @@ export class AuthService {
     });
 
     window.location.reload();
+  }
+
+  setLocalStorage(tokenValue: string, user: User) {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(this.jwtTokenKey, tokenValue);
+      localStorage.setItem(this.userKey, JSON.stringify(user));
+    }
+  }
+
+  removeLocalStorage() {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem(this.jwtTokenKey);
+      localStorage.removeItem(this.userKey);
+    }
   }
 }

@@ -11,6 +11,7 @@ import { Subject } from '../../types/Subject';
 })
 export class SubjectCardComponent {
   @Input() subject: Subject = {} as Subject;
+  @Input() showActions: boolean = false;
 
   private timer: any;
   private endTime: Date = new Date();
@@ -25,7 +26,7 @@ export class SubjectCardComponent {
     this.updateTimeDisplay();
     this.timer = setInterval(() => this.updateTimeDisplay(), 1000);
 
-    if (this.subject.votes.length > 0) {
+    if (this.subject.votes && this.subject.votes.length > 0) {
       this.isVoted = true;
     }
   }

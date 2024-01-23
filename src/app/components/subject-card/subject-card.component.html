@@ -14,10 +14,19 @@
                 'Não'
                 }}</span>
 
+            @if (!showActions) {
             <a [routerLink]="['/votar', subject.id]"
                 class="w-full bg-zinc-800 text-zinc-100 p-2 rounded md:w-fit disabled:bg-zinc-600 text-nowrap">{{
                 isVoted || timeIsEnding ? 'Ver resultados' : 'Votar'
                 }}</a>
+            } @else {
+            <div class="flex gap-2">
+                <a [routerLink]="['/pautas/editar', subject.id]"
+                    class="w-full bg-zinc-800 text-zinc-100 p-2 rounded md:w-fit disabled:bg-zinc-600 text-nowrap">Editar</a>
+            </div>
+            }
+
+
 
         </div>
 

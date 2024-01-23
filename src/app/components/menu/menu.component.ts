@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../resources/auth/auth.service';
 import { BrandComponent } from '../brand/brand.component';
 
@@ -13,10 +13,11 @@ import { BrandComponent } from '../brand/brand.component';
 })
 export class MenuComponent {
   isOpen: boolean = false;
-  constructor(
-    private readonly authService: AuthService,
-    private router: Router,
-  ) {}
+  user: any;
+
+  constructor(private readonly authService: AuthService) {
+    this.authService.getUser().subscribe((user) => (this.user = user));
+  }
 
   ngOnInit(): void {}
 

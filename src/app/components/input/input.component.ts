@@ -15,18 +15,37 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   imports: [CommonModule],
   template: `
     <label
-      class="flex w-full rounded border border-zinc-300 bg-zinc-200 p-4 text-zinc-800 ring-zinc-900 ring-offset-2 focus-within:ring-1"
+      class="relative z-0 flex w-full rounded border border-zinc-300 bg-zinc-50 p-4 text-zinc-800 ring-zinc-900 ring-offset-2 focus-within:ring-1"
     >
-      <span class="sr-only">{{ placeholder }}</span>
-
+      <span
+        [ngClass]="
+          value
+            ? 'absolute left-3 top-0 -translate-y-1/2 bg-zinc-50 px-1 text-zinc-800'
+            : 'sr-only'
+        "
+        class="text-sm"
+      >
+        {{ placeholder }}</span
+      >
       <input
+        *ngIf="type !== 'textarea'"
         [type]="type"
         [placeholder]="placeholder"
         [value]="value"
         (input)="handleInput($event)"
         (blur)="onTouched()"
-        class="w-full bg-zinc-200 outline-none"
+        class="w-full bg-zinc-50 outline-none"
       />
+
+      <ng-container *ngIf="type === 'textarea'">
+        <textarea
+          [placeholder]="placeholder"
+          [value]="value"
+          (input)="handleInput($event)"
+          (blur)="onTouched()"
+          class="w-full bg-zinc-50 outline-none"
+        ></textarea>
+      </ng-container>
     </label>
 
     <div *ngIf="errorMessage" class="error-message mt-1 text-sm text-red-400">
@@ -35,9 +54,16 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   `,
 })
 export class InputComponent implements ControlValueAccessor {
-  @Input() type: 'text' | 'password' | 'email' = 'text';
+  @Input() type:
+    | 'text'
+    | 'password'
+    | 'email'
+    | 'textarea'
+    | 'date'
+    | 'datetime-local'
+    | 'number' = 'text';
   @Input() placeholder: string = '';
-  @Input() errorMessage: string = 'adasd';
+  @Input() errorMessage: string = '';
   @Input() mask: string = '';
 
   value: string = '';

@@ -6,7 +6,7 @@
     </div>
 </button>
 
-<div *ngIf="isOpen" class="fixed top-0 left-0 w-screen h-screen bg-zinc-900/20 flex items-start">
+<div *ngIf="isOpen" class="fixed top-0 left-0 w-screen h-screen bg-zinc-900/20 flex items-start z-20">
     <div class="bg-zinc-100 w-full max-w-xs h-screen">
 
         <div class="p-6 h-full">
@@ -27,6 +27,19 @@
                             class="p-2 rounded w-full hover:bg-zinc-200 cursor-pointer">Meus
                             votos</a>
                     </li>
+
+
+                    @if (user.role == 'ADMIN') {
+                    <li class="w-full flex">
+                        <a [routerLink]="['/pautas']"
+                            class="p-2 rounded w-full hover:bg-zinc-200 cursor-pointer">Gerenciar assuntos</a>
+                    </li>
+
+                    <li class="w-full flex">
+                        <a [routerLink]="['/meus-votos']"
+                            class="p-2 rounded w-full hover:bg-zinc-200 cursor-pointer">Gerenciar usuarios</a>
+                    </li>
+                    }
 
 
                 </ul>

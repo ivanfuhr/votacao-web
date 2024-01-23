@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Subject } from '../../types/Subject';
+import { catchError, map, throwError } from 'rxjs';
+import { PaginateResponse } from '../../types/PaginateResponse';
+import { Subject, SubjectCreate } from '../../types/Subject';
 
 @Injectable({
   providedIn: 'root',
@@ -20,5 +22,51 @@ export class SubjectsService {
 
   getSubjectsVotedByUser() {
     return this.httpClient.get<Subject[]>(`${this.apiUrl}/my-votes`);
+  }
+
+  getAllSubjects({ page }: { page: number }) {
+    const url = new URL(`${this.apiUrl}/all`);
+    if (page) {
+      url.searchParams.set('page', page.toString());
+    }
+
+    return this.httpClient.get<PaginateResponse<Subject>>(url.toString());
+  }
+
+  createSubject(subject: SubjectCreate) {
+    return this.httpClient.post<Subject>(this.apiUrl, subject).pipe(
+      map((response: any) => {
+        return response;
+      }),
+      catchError((error) => {
+        return throwError(error);
+      }),
+    );
+  }
+
+  updateSubject(subjectId: string, subject: SubjectCreate) {
+    const url = new URL(`${this.apiUrl}/${subjectId}`);
+
+    return this.httpClient.put<Subject>(url.toString(), subject).pipe(
+      map((response: any) => {
+        return response;
+      }),
+      catchError((error) => {
+        return throwError(error);
+      }),
+    );
+  }
+
+  deleteSubject(subjectId: string) {
+    const url = new URL(`${this.apiUrl}/${subjectId}`);
+
+    return this.httpClient.delete<Subject>(url.toString()).pipe(
+      map((response: any) => {
+        return response;
+      }),
+      catchError((error) => {
+        return throwError(error);
+      }),
+    );
   }
 }

@@ -1,0 +1,18 @@
+<div class="pt-6 flex">
+    <a [routerLink]="['/pautas/criar']"
+        class="w-full rounded border border-zinc-900 text-center bg-zinc-900 p-2 font-medium text-zinc-200 ring-zinc-900 ring-offset-2 focus-within:ring-1">Criar
+        nova pauta</a>
+</div>
+
+<div class="flex flex-col gap-6 py-6" *ngIf="subjectsResponse.data; else noSubjects">
+    <app-subject-card *ngFor="let subject of subjectsResponse.data" [subject]="subject" [showActions]="true" />
+
+    <app-pager *ngIf="subjectsResponse.meta" [totalPages]="subjectsResponse.meta.lastPage"
+        [currentPage]="subjectsResponse.meta.currentPage" (pageChange)="handlePageChange($event)" />
+</div>
+
+<ng-template #noSubjects>
+    <div class="flex items-center justify-center gap-4 flex-col">
+        <h3 class="text-xl font-bold text-zinc-900">Nenhuma pauta ativa no momento</h3>
+    </div>
+</ng-template>
