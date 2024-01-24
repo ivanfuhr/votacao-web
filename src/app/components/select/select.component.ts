@@ -33,7 +33,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
         (blur)="onTouched()"
         class="mt-2 w-full bg-zinc-50 outline-none"
       >
-        <option [value]="">{{ placeholder }}</option>
+        <option value="">{{ placeholder }}</option>
         <ng-container *ngFor="let option of options">
           <option [value]="option.value">{{ option.label }}</option>
         </ng-container>

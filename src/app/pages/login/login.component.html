@@ -1,7 +1,4 @@
-<div class="flex flex-col justify-center items-start gap-4 max-w-sm mx-auto h-screen">
-
-    <app-brand />
-
+<div class="flex flex-col justify-center items-start gap-4 max-w-sm mx-auto h-full py-6">
     <h3 class="text-md text-zinc-800">
         Bem vindo de volta! Que bom ver você, de novo!
     </h3>
@@ -12,6 +9,9 @@
 
         <app-input [placeholder]="'Informe a sua senha'" [type]="'password'"
             [errorMessage]="getErrorMessage('password')" formControlName="password" />
+
+        <a [routerLink]="['/registrar']" class="p-2 rounded w-full hover:bg-zinc-200 cursor-pointer">Cadastrar
+            agora</a>
 
         <app-button [label]="'Entrar'" [type]="'submit'" />
     </form>

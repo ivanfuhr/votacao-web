@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, enableProdMode, isDevMode } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { ToastComponent } from './components/toast/toast.component';
-import { AuthGuard } from './resources/auth/auth.guard';
+// import { AuthGuard } from './resources/auth/auth.guard';
 import { AuthService } from './resources/auth/auth.service';
 import { User } from './types/User';
 
@@ -11,9 +11,9 @@ import { User } from './types/User';
   standalone: true,
   imports: [RouterOutlet, ToastComponent, HeaderComponent],
   templateUrl: './app.component.html',
-  providers: [AuthGuard, AuthService],
+  providers: [],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'web';
   user: User | undefined = undefined;
 
@@ -21,5 +21,11 @@ export class AppComponent {
     this.authService.getUser().subscribe((user: any) => {
       this.user = user;
     });
+  }
+
+  ngOnInit() {
+    if (!isDevMode()) {
+      enableProdMode();
+    }
   }
 }

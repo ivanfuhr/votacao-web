@@ -1,0 +1,19 @@
+<div class="flex flex-col gap-6 py-6">
+    <div class="bg-zinc-50 rounded flex flex-col p-4 gap-6">
+
+        <div class="flex w-full justify-between">
+            <h3 class="text-xl text-zinc-900 font-bold">Categoria</h3>
+            <a [routerLink]="['/categorias']" class="text-zinc-900">Voltar</a>
+        </div>
+
+        <form app-form [formGroup]="subjectCategoryForm" (ngSubmit)="onSubmit()">
+            <app-input label="Título" placeholder="Título" [type]="'text'" formControlName="title"
+                [errorMessage]="getErrorMessage('title')" />
+
+            <app-button label="Salvar" [type]="'submit'" />
+            <app-delete-button *ngIf="category.id" (deleteAction)="handleDeeleteAction()" />
+        </form>
+
+
+    </div>
+</div>

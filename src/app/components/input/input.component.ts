@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, forwardRef, Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-input',
@@ -11,8 +12,9 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
       useExisting: forwardRef(() => InputComponent),
       multi: true,
     },
+    provideNgxMask(),
   ],
-  imports: [CommonModule],
+  imports: [CommonModule, NgxMaskDirective],
   template: `
     <label
       class="relative z-0 flex w-full rounded border border-zinc-300 bg-zinc-50 p-4 text-zinc-800 ring-zinc-900 ring-offset-2 focus-within:ring-1"
@@ -34,6 +36,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
         [value]="value"
         (input)="handleInput($event)"
         (blur)="onTouched()"
+        [mask]="mask"
         class="w-full bg-zinc-50 outline-none"
       />
 
@@ -87,51 +90,6 @@ export class InputComponent implements ControlValueAccessor {
 
   handleInput(event: Event): void {
     const inputValue = (event.target as HTMLInputElement).value;
-
-    if (!this.mask) {
-      this.value = inputValue;
-      this.onChange(this.value);
-      return;
-    }
-
-    this.value = this.applyMask(inputValue, this.mask);
-    this.onChange(this.value);
-  }
-
-  applyMask(value: string, mask: string): string {
-    let result = '';
-    let valueIndex = 0;
-    let maskIndex = 0;
-
-    while (maskIndex < mask.length) {
-      if (mask[maskIndex] === '0') {
-        // Para dígitos
-        if (valueIndex < value.length && !isNaN(Number(value[valueIndex]))) {
-          result += value[valueIndex];
-        } else {
-          break; // Interrompe se não há mais dígitos ou se o caractere da entrada não é um dígito
-        }
-        valueIndex++;
-      } else if (mask[maskIndex] === 'a') {
-        // Para letras
-        if (valueIndex < value.length && isNaN(Number(value[valueIndex]))) {
-          result += value[valueIndex];
-        } else {
-          break; // Interrompe se não há mais letras ou se o caractere da entrada não é uma letra
-        }
-        valueIndex++;
-      } else {
-        result += mask[maskIndex];
-        if (
-          valueIndex < value.length &&
-          mask[maskIndex] === value[valueIndex]
-        ) {
-          valueIndex++;
-        }
-      }
-      maskIndex++;
-    }
-
-    return result;
+    this.onChange(inputValue);
   }
 }

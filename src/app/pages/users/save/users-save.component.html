@@ -1,0 +1,31 @@
+<div class="flex flex-col gap-6 py-6">
+    <div class="bg-zinc-50 rounded flex flex-col p-4 gap-6">
+
+        <div class="flex w-full justify-between">
+            <h3 class="text-xl text-zinc-900 font-bold">Usuario</h3>
+            <a [routerLink]="['/usuarios']" class="text-zinc-900">Voltar</a>
+        </div>
+
+        <form app-form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+            <app-input label="Nome" placeholder="Nome" [type]="'text'" formControlName="name"
+                [errorMessage]="getErrorMessage('nome')" />
+
+            <app-input label="Email" placeholder="Email" [type]="'text'" formControlName="email"
+                [errorMessage]="getErrorMessage('email')" />
+
+            <app-input label="Senha" placeholder="Senha" [type]="'password'" formControlName="password"
+                [errorMessage]="getErrorMessage('password')" />
+
+            <app-input label="Documento" placeholder="Documento" [type]="'text'" formControlName="document"
+                [errorMessage]="getErrorMessage('document')" mask="000.000.000-00" />
+
+            <app-select label="Tipo" [options]="typeOptions" formControlName="role" [placeholder]="'Selecione um tipo'"
+                class="flex-1" />
+
+            <app-button label="Salvar" [type]="'submit'" />
+            <app-delete-button *ngIf="user.id" (deleteAction)="handleDeeleteAction()" />
+        </form>
+
+
+    </div>
+</div>

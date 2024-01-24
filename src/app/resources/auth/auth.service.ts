@@ -4,6 +4,7 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ToastService } from '../../components/toast/toast.service';
+import { environment } from '../../environment/environment';
 import { User } from '../../types/User';
 import { LoginUserDTO } from './dto/login-user.dto';
 
@@ -11,6 +12,8 @@ import { LoginUserDTO } from './dto/login-user.dto';
   providedIn: 'root',
 })
 export class AuthService {
+  private apiUrl = `${environment.apiUrl}/auth`;
+
   private tokenSubject = new BehaviorSubject<string>('');
   private userSubject = new BehaviorSubject<any>(null);
 
@@ -22,6 +25,10 @@ export class AuthService {
     private http: HttpClient,
     private readonly toast: ToastService,
   ) {
+    this.initialize();
+  }
+
+  private initialize() {
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem(this.jwtTokenKey);
       const user = localStorage.getItem(this.userKey);
@@ -29,7 +36,6 @@ export class AuthService {
       if (token && user) {
         this.tokenSubject.next(token);
         this.userSubject.next(JSON.parse(user));
-
         this.revalidate().subscribe();
       }
     }
@@ -52,30 +58,30 @@ export class AuthService {
   }
 
   login({ document, password }: LoginUserDTO): Observable<any> {
-    return this.http
-      .post('http://localhost:3000/auth/login', { document, password })
-      .pipe(
-        map((response: any) => {
-          this.setLocalStorage(response.access_token, response.user);
-          this.tokenSubject.next(response.access_token);
-          this.userSubject.next(response.user);
+    return this.http.post(`${this.apiUrl}/login`, { document, password }).pipe(
+      map((response: any) => {
+        this.setLocalStorage(response.access_token, response.user);
+        this.tokenSubject.next(response.access_token);
+        this.userSubject.next(response.user);
 
-          this.toast.show({
-            message: 'Login realizado com sucesso!',
-            type: 'success',
-          });
-
-          window.location.reload();
-          return response;
-        }),
-        catchError((error) => {
-          return throwError(error);
-        }),
-      );
+        this.toast.show({
+          message: 'Login realizado com sucesso!',
+          type: 'success',
+        });
+        return response;
+      }),
+      catchError((error) => {
+        this.toast.show({
+          message: 'Erro ao realizar login!',
+          type: 'error',
+        });
+        return throwError(error);
+      }),
+    );
   }
 
   revalidate(): Observable<any> {
-    return this.http.patch('http://localhost:3000/auth/revalidate', {}).pipe(
+    return this.http.patch(`${this.apiUrl}/revalidate`, {}).pipe(
       map((response: any) => {
         this.tokenSubject.next(response.access_token);
         this.userSubject.next(response.user);
@@ -85,12 +91,12 @@ export class AuthService {
       }),
       catchError((error) => {
         if (error.status === 401) {
-          this.removeLocalStorage();
-          this.tokenSubject.next('');
-          this.userSubject.next(null);
-          this.toast.show({ message: 'Sessão expirada!', type: 'error' });
-
-          window.location.reload();
+          this.handleSessionExpiration();
+        } else {
+          this.toast.show({
+            message: 'Erro ao revalidar a sessão!',
+            type: 'error',
+          });
         }
         return throwError(error);
       }),
@@ -99,7 +105,6 @@ export class AuthService {
 
   logout(): void {
     this.removeLocalStorage();
-
     this.tokenSubject.next('');
     this.userSubject.next(null);
 
@@ -107,8 +112,13 @@ export class AuthService {
       message: 'Logout realizado com sucesso!',
       type: 'success',
     });
+  }
 
-    window.location.reload();
+  private handleSessionExpiration() {
+    this.removeLocalStorage();
+    this.tokenSubject.next('');
+    this.userSubject.next(null);
+    this.toast.show({ message: 'Sessão expirada!', type: 'error' });
   }
 
   setLocalStorage(tokenValue: string, user: User) {

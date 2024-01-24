@@ -9,7 +9,7 @@
             <h3 class="text-xl font-bold text-zinc-900 w-full">{{ subject.title }}</h3>
             <p class="text-zinc-800">{{ subject.description }}</p>
 
-            <div *ngIf="!isVoted && !timeIsEnding else results" class="flex flex-col gap-2 w-full">
+            <div *ngIf="!isVoted && !timeIsEnded else results" class="flex flex-col gap-2 w-full">
                 <h4 class="text-zinc-900 font-bold">Qual sua opinião, você concoda?</h4>
                 <form class="w-full flex flex-col gap-2" [formGroup]="voteForm" (submit)="onSubmit()">
                     <div class="grid grid-cols-2 gap-2">
@@ -26,15 +26,23 @@
                         </label>
                     </div>
 
-                    <div *ngIf="voteForm.get('vote')?.value">
+                    <div *ngIf="voteForm.get('vote')?.value" class="w-full flex flex-col gap-2">
+                        @if (user) {
                         <app-button [label]="'Votar'" [type]="'submit'" />
                         <span class="text-sm font-thin text-red-500">* depois de votar, você não poderá
                             mudar sua
                             opinião.</span>
+                        } @else {
+                        <a [routerLink]="['/login']" class="w-full bg-zinc-800 text-zinc-200 p-2 text-center">Faça login
+                            para
+                            votar</a>
+                        }
                     </div>
+
+
                 </form>
-                <span class="text-sm font-thin text-zinc-700 w-full text-center">Tempo restante: {{ timeDisplay
-                    }}</span>
+                <span class="text-sm font-thin text-zinc-700 w-full text-center">Tempo restante: <app-countdown
+                        [endAt]="endTime" (timeIsEnded)="handleTimeIsEnded()" /></span>
             </div>
 
 

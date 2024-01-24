@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, throwError } from 'rxjs';
+import { environment } from '../../environment/environment';
 import { PaginateResponse } from '../../types/PaginateResponse';
 import { Subject, SubjectCreate } from '../../types/Subject';
 
@@ -8,7 +9,7 @@ import { Subject, SubjectCreate } from '../../types/Subject';
   providedIn: 'root',
 })
 export class SubjectsService {
-  private apiUrl = 'http://localhost:3000/subjects';
+  private apiUrl = `${environment.apiUrl}/subjects`;
 
   constructor(private httpClient: HttpClient) {}
 
@@ -16,12 +17,26 @@ export class SubjectsService {
     return this.httpClient.get<Subject>(`${this.apiUrl}/${id}`);
   }
 
-  getSubjects() {
-    return this.httpClient.get<Subject[]>(this.apiUrl);
+  getSubjects({ page, categoryId }: { page: number; categoryId?: string }) {
+    const url = new URL(this.apiUrl);
+    if (page) {
+      url.searchParams.set('page', page.toString());
+    }
+
+    if (categoryId) {
+      url.searchParams.set('categoryId', categoryId);
+    }
+
+    return this.httpClient.get<PaginateResponse<Subject>>(url.toString());
   }
 
-  getSubjectsVotedByUser() {
-    return this.httpClient.get<Subject[]>(`${this.apiUrl}/my-votes`);
+  getSubjectsVotedByUser({ page }: { page: number }) {
+    const url = new URL(`${this.apiUrl}/my-votes`);
+    if (page) {
+      url.searchParams.set('page', page.toString());
+    }
+
+    return this.httpClient.get<PaginateResponse<Subject>>(url.toString());
   }
 
   getAllSubjects({ page }: { page: number }) {

@@ -8,7 +8,7 @@ import { MenuComponent } from '../menu/menu.component';
   selector: 'app-header',
   standalone: true,
   imports: [BrandComponent, CommonModule, MenuComponent],
-  template: `<header class="bg-zinc-50" *ngIf="user">
+  template: `<header class="bg-zinc-50">
     <div
       class="mx-auto flex max-w-screen-lg items-center justify-between px-8 py-6"
     >

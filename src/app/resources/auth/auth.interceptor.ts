@@ -10,15 +10,17 @@ export const AuthInterceptor: HttpInterceptorFn = (
   req: HttpRequest<any>,
   next: HttpHandlerFn,
 ): Observable<HttpEvent<any>> => {
-  const token = localStorage.getItem('@votacao/token');
+  if (typeof localStorage !== 'undefined') {
+    const token = localStorage.getItem('@votacao/token');
 
-  if (token) {
-    const cloned = req.clone({
-      headers: req.headers.set('Authorization', `Bearer ${token}`),
-    });
+    if (token) {
+      const cloned = req.clone({
+        headers: req.headers.set('Authorization', `Bearer ${token}`),
+      });
 
-    return next(cloned);
-  } else {
-    return next(req);
+      return next(cloned);
+    }
   }
+
+  return next(req);
 };

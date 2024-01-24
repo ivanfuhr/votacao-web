@@ -1,0 +1,28 @@
+<div class="pt-6 flex">
+    <a [routerLink]="['/usuarios/criar']"
+        class="w-full rounded border border-zinc-900 text-center bg-zinc-900 p-2 font-medium text-zinc-200 ring-zinc-900 ring-offset-2 focus-within:ring-1">Criar
+        novo usuario</a>
+</div>
+
+<div class="flex flex-col gap-6 py-6" *ngIf="users.data && users.data.length; else noUsers">
+    <div *ngFor="let user of users.data" class="bg-zinc-50 rounded flex px-4 py-4 items-center justify-between">
+        <h3 class="text-xl font-bold text-zinc-900 w-100">
+            {{ user.name }}
+            <span class="font-thin text-zinc-700 text-sm">({{ user.document }})</span>
+        </h3>
+
+        <div class="flex gap-2">
+            <a [routerLink]="['/usuarios/editar', user.id]"
+                class="w-full bg-zinc-800 text-zinc-100 p-2 rounded md:w-fit disabled:bg-zinc-600 text-nowrap">Editar</a>
+        </div>
+    </div>
+
+    <app-pager *ngIf="users.meta" [totalPages]="users.meta.lastPage" [currentPage]="users.meta.currentPage"
+        (pageChange)="handlePageChange($event)" />
+</div>
+
+<ng-template #noUsers>
+    <div class="flex items-center justify-center gap-4 flex-col">
+        <h3 class="text-xl font-bold text-zinc-900">Nenhuma usuario existente</h3>
+    </div>
+</ng-template>

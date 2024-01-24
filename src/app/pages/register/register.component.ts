@@ -11,10 +11,11 @@ import { BrandComponent } from '../../components/brand/brand.component';
 import { ButtonComponent } from '../../components/button/button.component';
 import { FormComponent } from '../../components/form/form.component';
 import { InputComponent } from '../../components/input/input.component';
-import { AuthService } from '../../resources/auth/auth.service';
+import { ToastService } from '../../components/toast/toast.service';
+import { UsersService } from '../../resources/users/users.service';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-register',
   standalone: true,
   imports: [
     InputComponent,
@@ -25,26 +26,33 @@ import { AuthService } from '../../resources/auth/auth.service';
     BrandComponent,
     RouterModule,
   ],
-  templateUrl: './login.component.html',
+  templateUrl: './register.component.html',
 })
-export class LoginComponent {
-  loginForm: FormGroup;
+export class RegisterComponent {
+  registerForm: FormGroup;
 
   constructor(
-    private readonly authService: AuthService,
+    private readonly userService: UsersService,
+    private readonly toastService: ToastService,
     private readonly router: Router,
   ) {
-    this.loginForm = new FormGroup({
+    this.registerForm = new FormGroup({
+      name: new FormControl('', [Validators.required]),
+      email: new FormControl('', [Validators.required]),
       document: new FormControl('', [Validators.required]),
       password: new FormControl('', [Validators.required]),
     });
   }
 
   onSubmit() {
-    if (this.loginForm.valid) {
-      this.authService.login(this.loginForm.value).subscribe({
+    if (this.registerForm.valid) {
+      this.userService.singup(this.registerForm.value).subscribe({
         next: (response) => {
-          this.router.navigate(['/']);
+          this.router.navigate(['/login']);
+          this.toastService.show({
+            message: 'Cadastro realizado com sucesso!',
+            type: 'success',
+          });
         },
         error: (error) => {
           this.handleServerError(error);
@@ -54,7 +62,7 @@ export class LoginComponent {
   }
 
   getErrorMessage(controlName: string): string {
-    const control = this.loginForm.get(controlName);
+    const control = this.registerForm.get(controlName);
     if (control && control.errors && 'serverError' in control.errors) {
       return control.errors['serverError'];
     }
@@ -66,7 +74,7 @@ export class LoginComponent {
 
     if (errors && Array.isArray(errors)) {
       errors.forEach((err) => {
-        const control = this.loginForm.get(err.path);
+        const control = this.registerForm.get(err.path);
 
         if (control) {
           control.setErrors({ serverError: err.message });

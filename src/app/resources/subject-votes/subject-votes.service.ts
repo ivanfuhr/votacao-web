@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environment/environment';
 import { VoteResults } from '../../types/VoteResults';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SubjectVotesService {
-  private apiUrl = 'http://localhost:3000/subject-votes';
+  private apiUrl = `${environment.apiUrl}/subject-votes`;
   private cache: any;
 
   constructor(private httpClient: HttpClient) {}

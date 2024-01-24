@@ -10,11 +10,14 @@ import {
 import { ActivatedRoute, ParamMap, RouterModule } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
 import { ButtonComponent } from '../../components/button/button.component';
+import { CountdownComponent } from '../../components/countdown/countdown.component';
 import { ChartPieComponent } from '../../components/pie-chart/pie-chart.component';
 import { ToastService } from '../../components/toast/toast.service';
+import { AuthService } from '../../resources/auth/auth.service';
 import { SubjectVotesService } from '../../resources/subject-votes/subject-votes.service';
 import { SubjectsService } from '../../resources/subjects/subjects.service';
 import { Subject } from '../../types/Subject';
+import { User } from '../../types/User';
 import { VoteResults } from '../../types/VoteResults';
 
 @Component({
@@ -26,6 +29,8 @@ import { VoteResults } from '../../types/VoteResults';
     ReactiveFormsModule,
     ButtonComponent,
     ChartPieComponent,
+    CountdownComponent,
+    RouterModule,
   ],
   styles: `
   
@@ -41,20 +46,19 @@ import { VoteResults } from '../../types/VoteResults';
 })
 export class VoteComponent implements OnInit {
   subject: Subject = {} as Subject;
-  timeDisplay: string = '';
-  timeIsEnding: boolean = false;
   voteResults: VoteResults = {} as VoteResults;
-  endTime: Date = new Date();
-  timer: any;
   isVoted: boolean = false;
+  endTime = new Date();
+  timeIsEnded: boolean = false;
   voteForm: FormGroup;
+  user: User | undefined = undefined;
 
   constructor(
     private route: ActivatedRoute,
     private subjectsService: SubjectsService,
     private subjectVotesService: SubjectVotesService,
     private toastService: ToastService,
-    private router: RouterModule,
+    private authService: AuthService,
   ) {
     this.voteForm = new FormGroup({
       vote: new FormControl('', [Validators.required]),
@@ -71,16 +75,21 @@ export class VoteComponent implements OnInit {
           map((subject) => {
             this.subject = subject;
 
+            this.endTime = new Date(subject.endAt);
+
             if (subject.votes.length > 0) {
               this.isVoted = true;
             }
 
-            this.calculateEndTime();
-            this.updateTimeDisplay();
+            if (this.endTime.getTime() < Date.now()) {
+              this.timeIsEnded = true;
+            }
 
-            setInterval(() => this.updateTimeDisplay(), 1000);
+            this.authService.getUser().subscribe((user) => {
+              this.user = user;
+            });
 
-            if (this.isVoted || this.timeIsEnding) {
+            if (this.isVoted || this.timeIsEnded) {
               this.subjectVotesService.getResults(this.subject.id).subscribe({
                 next: (results) => {
                   this.voteResults = results;
@@ -118,10 +127,6 @@ export class VoteComponent implements OnInit {
               });
 
               this.isVoted = true;
-              if (this.timer) {
-                clearInterval(this.timer);
-              }
-
               this.subject.votes.push(response);
             }
 
@@ -174,36 +179,7 @@ export class VoteComponent implements OnInit {
     }
   }
 
-  private calculateEndTime() {
-    this.endTime = new Date(
-      new Date(this.subject.startAt).getTime() + this.subject.timeToEnd * 1000,
-    );
-  }
-
-  private updateTimeDisplay() {
-    const now = new Date();
-    const timeLeft = this.endTime.getTime() - now.getTime();
-
-    if (timeLeft > 0 && !this.isVoted) {
-      this.timeDisplay = this.millisecondsToDhms(timeLeft);
-    } else {
-      this.timeDisplay = 'Tempo esgotado';
-      this.timeIsEnding = true;
-      clearInterval(this.timer);
-    }
-  }
-
-  private millisecondsToDhms(milliseconds: number): string {
-    const seconds = Math.floor(milliseconds / 1000);
-    const d = Math.floor(seconds / (3600 * 24));
-    const h = Math.floor((seconds % (3600 * 24)) / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = Math.floor(seconds % 60);
-
-    const dDisplay = d > 0 ? d + 'd ' : '';
-    const hDisplay = h > 0 ? h + 'h ' : '';
-    const mDisplay = m > 0 ? m + 'm ' : '';
-    const sDisplay = s > 0 ? s + 's' : '';
-    return dDisplay + hDisplay + mDisplay + sDisplay;
+  handleTimeIsEnded() {
+    this.timeIsEnded = true;
   }
 }
