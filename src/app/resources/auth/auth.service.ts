@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../../environment/environment';
 import { ToastService } from '../../components/toast/toast.service';
-import { environment } from '../../environment/environment';
 import { User } from '../../types/User';
 import { LoginUserDTO } from './dto/login-user.dto';
 

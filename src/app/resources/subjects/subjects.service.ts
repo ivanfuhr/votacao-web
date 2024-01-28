@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, throwError } from 'rxjs';
-import { environment } from '../../environment/environment';
+import { environment } from '../../../environment/environment';
 import { PaginateResponse } from '../../types/PaginateResponse';
 import { Subject, SubjectCreate } from '../../types/Subject';
 

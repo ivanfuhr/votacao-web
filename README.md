@@ -8,9 +8,10 @@ Para configurar e executar o projeto localmente, siga os passos abaixo:
 
 ### 1. Arquivo de Configuração `environment.ts`
 
-- Localize o arquivo de configuração em `src/app/environment/environment.ts`.
+- Localize o arquivo de configuração em `src/environment/environment.ts`.
 - Este arquivo contém variáveis de ambiente essenciais para o funcionamento da aplicação.
 - Configure as variáveis conforme necessário, ajustando parâmetros como URLs de API.
+- Para produção você pode configurar o arquivo `src/environment/environment.prod.ts`
 
 ### 2. Instalando Dependências
 
