@@ -25,7 +25,7 @@ export class SubjectCategoriesService {
 
   updateCategory(id: string, category: SubjectCategory) {
     return this.httpClient.put<SubjectCategory>(
-      `${this.apiUrl}/${category.id}`,
+      `${this.apiUrl}/${id}`,
       category,
     );
   }
