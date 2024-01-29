@@ -97,6 +97,8 @@ export class AuthService {
             message: 'Erro ao revalidar a sessão!',
             type: 'error',
           });
+
+          this.removeLocalStorage();
         }
         return throwError(error);
       }),

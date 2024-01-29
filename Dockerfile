@@ -10,7 +10,7 @@ RUN pnpm install
 
 COPY . /app
 
-RUN cp src/environment.prod.ts src/environment.ts
+RUN cp src/environment/environment.prod.ts src/environment/environment.ts
 
 RUN pnpm build:prod
 
